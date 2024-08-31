@@ -2,14 +2,7 @@
 
 with lib;
 let
-
   cfg = config.virtualisation.azure.agent;
-
-  provisionedHook = pkgs.writeScript "provisioned-hook" ''
-    #!${pkgs.runtimeShell}
-    /run/current-system/systemd/bin/systemctl start provisioned.target
-  '';
-
 in
 {
 
@@ -33,11 +26,6 @@ in
   ###### implementation
 
   config = lib.mkIf cfg.enable {
-    assertions = [{
-      assertion = config.networking.networkmanager.enable == false;
-      message = "Windows Azure Linux Agent is not compatible with NetworkManager";
-    }];
-
     boot.initrd.kernelModules = [ "ata_piix" ];
     networking.firewall.allowedUDPPorts = [ 68 ];
 
