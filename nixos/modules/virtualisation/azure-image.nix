@@ -78,7 +78,7 @@ in
       configFile = ./azure-config-user.nix;
       format = "raw";
 
-      bootSize = "${toString cfg.bootSize}M";
+      bootSize = lib.mkIf (cfg.vmGeneration == "v2") "${toString cfg.bootSize}M";
       partitionTableType = if (cfg.vmGeneration == "v2") then "efi" else "legacy";
 
       inherit (cfg) contents label;
