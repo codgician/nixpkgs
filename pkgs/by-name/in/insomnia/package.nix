@@ -3,6 +3,7 @@
   stdenv,
   fetchurl,
   appimageTools,
+  nix-update-script
 }:
 let
   pname = "insomnia";
@@ -10,7 +11,8 @@ let
 
   src =
     fetchurl
-      {
+      rec {
+        aarch64-darwin = x86_64-darwin;
         x86_64-darwin = {
           url = "https://github.com/Kong/insomnia/releases/download/core%40${version}/Insomnia.Core-${version}.dmg";
           hash = "sha256-Yny5Rwt8XHTM77DH4AXmY8VtZ92F7jAdNW+polPePJk=";
@@ -22,6 +24,8 @@ let
       }
       .${stdenv.system} or (throw "Unsupported system: ${stdenv.system}");
 
+  passthru.updateScript = nix-update-script { extraArgs = [ "--version-regex" "core@(.*)" ]; };
+
   meta = with lib; {
     homepage = "https://insomnia.rest";
     description = " The open-source, cross-platform API client for GraphQL, REST, WebSockets, SSE and gRPC. With Cloud, Local and Git storage.";
@@ -29,6 +33,7 @@ let
     changelog = "https://github.com/Kong/insomnia/releases/tag/core@${version}";
     license = licenses.asl20;
     platforms = [
+      "aarch64-darwin"
       "x86_64-linux"
       "x86_64-darwin"
     ];
@@ -46,6 +51,7 @@ if stdenv.hostPlatform.isDarwin then
       version
       src
       meta
+      passthru
       ;
     sourceRoot = ".";
 
@@ -81,6 +87,7 @@ else
       version
       src
       meta
+      passthru
       ;
 
     extraInstallCommands =
