@@ -2,7 +2,6 @@
   lib,
   stdenv,
   fetchurl,
-  fetchpatch,
   rdma-core,
   openssl,
   zlib,
@@ -29,20 +28,12 @@ stdenv.mkDerivation rec {
   pname = "mstflint";
 
   # if you update the version of this package, also update the input hash in mstflint_access!
-  version = "4.31.0-1";
+  version = "4.32.0-1";
 
   src = fetchurl {
     url = "https://github.com/Mellanox/mstflint/releases/download/v${version}/mstflint-${version}.tar.gz";
-    hash = "sha256-wBUkFOdYChiSXHcH6+LLZZ06Hte4ABWjW+pNcjtk+Oc=";
+    hash = "sha256-dNshekn1770psArIvBnRjjQHQJzqN6xODGPa2VuMoHY=";
   };
-
-  patches = [
-    # fixes build errors due to missing declarations in headers
-    (fetchpatch {
-      url = "https://patch-diff.githubusercontent.com/raw/Mellanox/mstflint/pull/1131.patch";
-      sha256 = "sha256-tn8EO9HkDrMroV6byUPgjclBIK8tq4xGyi4Kx/rIj+w=";
-    })
-  ];
 
   nativeBuildInputs = [
     autoconf
@@ -81,9 +72,6 @@ stdenv.mkDerivation rec {
   #
   # Remove host_cpu replacement again (see https://github.com/Mellanox/mstflint/pull/865),
   # needs to hit master or a release. master_devel may be rebased.
-  #
-  # Remove patch for regex check, after https://github.com/Mellanox/mstflint/pull/871
-  # got merged.
   prePatch = [
     ''
       patchShebangs eval_git_sha.sh
@@ -91,8 +79,6 @@ stdenv.mkDerivation rec {
           --replace "build_cpu" "host_cpu"
       substituteInPlace common/compatibility.h \
           --replace "#define ROOT_PATH \"/\"" "#define ROOT_PATH \"$out/\""
-      substituteInPlace configure.ac \
-          --replace 'Whether to use GNU C regex])' 'Whether to use GNU C regex])],[AC_MSG_RESULT([yes])'
     ''
     (lib.optionals (!onlyFirmwareUpdater) ''
       substituteInPlace common/python_wrapper.sh \
