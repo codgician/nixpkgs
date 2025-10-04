@@ -123,6 +123,7 @@ stdenv.mkDerivation (finalAttrs: {
           -e "s:/usr/bin/gnome-shell:gnome-shell\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
           -e "s:/usr/bin/plasmashell:plasmashell\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
           -e "s:/usr/bin/ptiagent:ptiagent\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
+          -e "s:/usr/bin/X:X\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
           -o bin/prlcc.tmp bin/prlcc
       mv bin/prlcc.tmp bin/prlcc
 

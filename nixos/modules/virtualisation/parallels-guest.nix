@@ -53,7 +53,7 @@ in
       path = [ prl-tools ];
       serviceConfig = {
         ExecStart = "${prl-tools}/bin/prltoolsd -f";
-        PIDFile = "/var/run/prltoolsd.pid";
+        PIDFile = "/run/prltoolsd.pid";
         WorkingDirectory = "${prl-tools}/bin";
       };
     };
