@@ -19,6 +19,7 @@
   undmg,
   util-linux,
   wayland,
+  writeShellScriptBin,
   xorg,
 }:
 
@@ -66,6 +67,7 @@ stdenv.mkDerivation (finalAttrs: {
   buildInputs = [
     fuse
     glib
+    (writeShellScriptBin "ptiagent" "true")
     xorg.libX11
     xorg.libXcomposite
     xorg.libXext
@@ -115,6 +117,14 @@ stdenv.mkDerivation (finalAttrs: {
       # replace hardcoded /usr/bin/prl_fsd
       substituteInPlace ../mount.fuse.prl_fsd \
         --replace-fail "/usr/bin/prl_fsd" "$out/bin/prl_fsd"
+
+      # Patch prlcc
+      bbe -e "s:/usr/bin/compiz:compiz\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
+          -e "s:/usr/bin/gnome-shell:gnome-shell\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
+          -e "s:/usr/bin/plasmashell:plasmashell\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
+          -e "s:/usr/bin/ptiagent:ptiagent\x00\x00\x00\x00\x00\x00\x00\x00\x00:" \
+          -o bin/prlcc.tmp bin/prlcc
+      mv bin/prlcc.tmp bin/prlcc
 
       # install binaries
       for i in bin/* sbin/prl_nettool sbin/prl_snapshot; do
